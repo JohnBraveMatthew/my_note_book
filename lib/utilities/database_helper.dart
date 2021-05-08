@@ -11,8 +11,10 @@ class Databasehelper {
 
   Databasehelper.private();
   static final Databasehelper instance = Databasehelper.private();
+  Note note = Note();
 
-  Database _database;
+  static Database _database;
+
   Future<Database> get database async {
     if (_database != null) {
       return _database;
@@ -23,15 +25,14 @@ class Databasehelper {
 
   _initDatabase() async {
     Directory dataDirectory = await getApplicationDocumentsDirectory();
-    String dbPath = join(dataDirectory.toString(), _dbName);
-    return await openDatabase(dbPath,
-        version: _dbVersion, onCreate: _onCreateDb);
+    String dbPath = join(dataDirectory.path, _dbName);
+    return await openDatabase(dbPath, version: _dbVersion, onCreate: _onCreate);
   }
 
-  _onCreateDb(Database db, int version) async {
+  _onCreate(Database db, int version) async {
     await db.execute('''
     CREATE TABLE ${Note.tblName}(
-    ${Note.noteId} INTEGER PRIMARY KEY AUTOINCREMENT,
+    ${Note.noteId} INTEGER PRIMARY KEY,
     ${Note.noteTitle} TEXT NOT NULL,
     ${Note.noteBody} TEXT NOT NULL
     )
@@ -41,6 +42,24 @@ class Databasehelper {
   Future<int> insertNote(Note note) async {
     Database db = await database;
     return await db.insert(Note.tblName, note.toMap());
+  }
+
+  Future<List<Map<String, dynamic>>> queryAll() async {
+    Database db = await database;
+    return await db.query(Note.tblName);
+  }
+
+  Future update(Note note) async {
+    Database db = await database;
+
+    return await db.update(Note.tblName, note.toMap(),
+        where: '${Note.noteId} = ?', whereArgs: [note.id]);
+  }
+
+  Future delete(int id) async {
+    Database db = await database;
+    return await db.delete(Note.tblName,
+        where: '${Note.noteId} = ?', whereArgs: [note.id]);
   }
 
   Future<List<Note>> fetchNote() async {

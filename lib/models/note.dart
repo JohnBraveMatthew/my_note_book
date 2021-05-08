@@ -3,11 +3,11 @@ class Note {
   static const noteId = "id";
   static const noteBody = "body";
   static const noteTitle = "title";
-
+  List notes;
   int id;
   String title, body;
 
-  Note({this.id, this.title, this.body});
+  Note({this.id, this.title, this.body, this.notes});
 
   Map<String, dynamic> toMap() {
     var map = <String, dynamic>{noteBody: body, noteTitle: title};
