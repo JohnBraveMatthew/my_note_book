@@ -5,8 +5,8 @@ import 'package:my_note_book/utilities/database_helper.dart';
 
 class AddNote extends StatefulWidget {
   final Note note;
-  final Function updateNoteList;
-  AddNote({this.note, this.updateNoteList});
+  // final Function updateNoteList;
+  AddNote({this.note});
   @override
   _AddNoteState createState() => _AddNoteState();
 }
@@ -17,27 +17,22 @@ class _AddNoteState extends State<AddNote> {
   String _title;
   String _body;
   //DateTime _date = DateTime.now();
-  TextEditingController _dateController = TextEditingController();
+  //TextEditingController _dateController = TextEditingController();
 
+  Note _note = Note();
+  DatabaseHelper _DBhelper;
   final formkey = GlobalKey<FormState>();
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    //_dateController.text = _dateFormat.format(_date);
-    if (widget.note != null) {
-      _title = widget.note.title;
-      _body = widget.note.body;
-      //_date = widget.note.date;
-    }
-  }
+    _DBhelper = DatabaseHelper.instance;
 
-  @override
-  void dispose() {
-    // TODO: implement dispose
-    super.dispose();
-    _dateController.dispose();
+    if (widget.note != null) {
+      _note.title = widget.note.title;
+      _note.body = widget.note.body;
+    }
   }
 
   @override
@@ -53,7 +48,7 @@ class _AddNoteState extends State<AddNote> {
             ),
             onPressed: _save,
             label: Text(
-              "Save",
+              widget.note == null ? "Save" : "update",
               style: TextStyle(color: Colors.white),
             ),
           )
@@ -71,12 +66,12 @@ class _AddNoteState extends State<AddNote> {
                   validator: (val) =>
                       (val.isEmpty ? "provide a name for your document" : null),
                   decoration: InputDecoration(hintText: "Document title"),
-                  onSaved: (val) => _title = val,
-                  initialValue: _title,
+                  onSaved: (val) => _note.title = val,
+                  initialValue: _note.title,
                 ),
                 TextFormField(
-                  onSaved: (val) => _body = val,
-                  initialValue: _body,
+                  onSaved: (val) => _note.body = val,
+                  initialValue: _note.body,
                   validator: (val) => null,
                   textAlign: TextAlign.justify,
                   style: TextStyle(fontSize: 20),
@@ -96,22 +91,22 @@ class _AddNoteState extends State<AddNote> {
     );
   }
 
-  _save() {
+  _save() async {
+    print(widget.note.title);
     if (formkey.currentState.validate()) {
       formkey.currentState.save();
-
-      Note _note = Note(
-        title: _title,
-        body: _body,
-      );
-      if (widget.note == null) {
-        DatabaseHelper.instance.insertNote(_note);
+      print(_note.title);
+      if (widget.note != null) {
+        //_note.id = widget.note.id;
+        await _DBhelper.update(_note);
       } else {
-        DatabaseHelper.instance.update(_note);
+        await _DBhelper.insertNote(_note);
       }
-      //widget.updateNoteList();
-      //refreshNoteList();
-      Navigator.push(
+      setState(() {
+        _DBhelper.fetchNote();
+      });
+
+      Navigator.pushReplacement(
           context, MaterialPageRoute(builder: (context) => Notebook()));
     }
   }

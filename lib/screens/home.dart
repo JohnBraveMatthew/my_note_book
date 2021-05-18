@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:my_note_book/models/note.dart';
 import 'package:my_note_book/screens/add_note.dart';
 import 'package:my_note_book/utilities/database_helper.dart';
@@ -11,18 +10,23 @@ class Notebook extends StatefulWidget {
 
 class _NotebookState extends State<Notebook> {
   Future<List<Note>> _noteList;
-  DatabaseHelper dbHelper;
-  final DateFormat _dateFormat = DateFormat('mmm dd, yyyy');
-  AddNote addNote = AddNote();
+  //final DateFormat _dateFormat = DateFormat('mmm dd, yyyy');
+  //AddNote addNote = AddNote();
+  DatabaseHelper _DBhelper;
 
   final formkey = GlobalKey<FormState>();
 
-  //DatabaseHelper dbHelper;
+  refreshNoteList() {
+    setState(() {
+      _noteList = _DBhelper.fetchNote();
+    });
+  }
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    _DBhelper = DatabaseHelper.instance;
     refreshNoteList();
   }
 
@@ -63,15 +67,19 @@ class _NotebookState extends State<Notebook> {
           ListTile(
               title: Text(note.title),
               subtitle: Text("${note.body}"),
-              trailing: Icon(Icons.delete),
+              trailing: IconButton(
+                icon: Icon(
+                  Icons.delete,
+                ),
+                onPressed: () {
+                  _DBhelper.delete(note.id);
+                  refreshNoteList();
+                },
+              ),
               onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (_) => AddNote(
-                              note: note,
-                              updateNoteList: refreshNoteList,
-                            )));
+                //Navigator.of(context, rootNavigator: )
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (_) => AddNote(note: note)));
               }),
           Divider(
             height: 10,
@@ -79,11 +87,5 @@ class _NotebookState extends State<Notebook> {
         ],
       ),
     );
-  }
-
-  refreshNoteList() {
-    setState(() {
-      _noteList = DatabaseHelper.instance.getNoteList();
-    });
   }
 }
