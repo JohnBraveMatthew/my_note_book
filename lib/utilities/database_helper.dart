@@ -33,7 +33,7 @@ class DatabaseHelper {
     CREATE TABLE ${Note.tblName}(
     ${Note.noteId} INTEGER PRIMARY KEY AUTOINCREMENT,
     ${Note.noteTitle} TEXT NOT NULL,
-    ${Note.noteBody} TEXT NOT NULL
+    ${Note.noteBody} TEXT NOT NULL,
     )
     ''');
   }
@@ -57,10 +57,8 @@ class DatabaseHelper {
 
   Future update(Note note) async {
     Database db = await database;
-
-    final int result = await db.update(Note.tblName, note.toMap(),
+    return await db.update(Note.tblName, note.toMap(),
         where: '${Note.noteId} = ?', whereArgs: [note.id]);
-    return result;
   }
 
   Future<int> delete(int id) async {

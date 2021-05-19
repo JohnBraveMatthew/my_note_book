@@ -6,8 +6,9 @@ class Note {
 
   int id;
   String title, body;
+  DateTime time;
 
-  Note({this.id, this.title, this.body});
+  Note({this.id, this.title, this.body, this.time});
 
   Map<String, dynamic> toMap() {
     var map = <String, dynamic>{noteBody: body, noteTitle: title};

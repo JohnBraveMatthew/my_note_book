@@ -13,10 +13,9 @@ class AddNote extends StatefulWidget {
 
 class _AddNoteState extends State<AddNote> {
   //final DateFormat _dateFormat = DateFormat('mmm dd, yyyy');
-
-  String _title;
-  String _body;
-  //DateTime _date = DateTime.now();
+  // String _title;
+  // String _body;
+  // DateTime _date = DateTime.now();
   //TextEditingController _dateController = TextEditingController();
 
   Note _note = Note();
@@ -92,12 +91,12 @@ class _AddNoteState extends State<AddNote> {
   }
 
   _save() async {
-    print(widget.note.title);
+    //print(widget.note.title);
     if (formkey.currentState.validate()) {
       formkey.currentState.save();
       print(_note.title);
       if (widget.note != null) {
-        //_note.id = widget.note.id;
+        _note.id = widget.note.id;
         await _DBhelper.update(_note);
       } else {
         await _DBhelper.insertNote(_note);
