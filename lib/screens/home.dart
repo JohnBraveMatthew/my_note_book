@@ -55,7 +55,9 @@ class _NotebookState extends State<Notebook> {
         backgroundColor: Theme.of(context).primaryColor,
         child: Icon(Icons.add),
         onPressed: () => Navigator.push(
-            (context), MaterialPageRoute(builder: (_) => AddNote())),
+            (context),
+            MaterialPageRoute(
+                builder: (_) => AddNote(refreshNoteList: refreshNoteList))),
       ),
     );
   }
@@ -79,8 +81,11 @@ class _NotebookState extends State<Notebook> {
               ),
               onTap: () {
                 //Navigator.of(context, rootNavigator: )
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (_) => AddNote(note: note)));
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (_) => AddNote(
+                            note: note, refreshNoteList: refreshNoteList)));
               }),
           Divider(
             height: 10,

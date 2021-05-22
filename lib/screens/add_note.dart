@@ -6,8 +6,8 @@ import 'package:my_note_book/utilities/database_helper.dart';
 
 class AddNote extends StatefulWidget {
   final Note note;
-  // final Function updateNoteList;
-  AddNote({this.note});
+  final Function refreshNoteList;
+  AddNote({this.note, this.refreshNoteList});
   @override
   _AddNoteState createState() => _AddNoteState();
 }
@@ -121,8 +121,8 @@ class _AddNoteState extends State<AddNote> {
       setState(() {
         _DBhelper.fetchNote();
       });
-
-      Navigator.pushReplacement(
+      widget.refreshNoteList();
+      Navigator.pop(
           context, MaterialPageRoute(builder: (context) => Notebook()));
     }
   }
