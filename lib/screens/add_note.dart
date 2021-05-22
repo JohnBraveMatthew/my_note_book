@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:my_note_book/models/note.dart';
 import 'package:my_note_book/screens/home.dart';
 import 'package:my_note_book/utilities/database_helper.dart';
@@ -15,8 +16,9 @@ class _AddNoteState extends State<AddNote> {
   //final DateFormat _dateFormat = DateFormat('mmm dd, yyyy');
   // String _title;
   // String _body;
-  // DateTime _date = DateTime.now();
-  //TextEditingController _dateController = TextEditingController();
+  DateTime _date = DateTime.now();
+  TextEditingController _dateController = TextEditingController();
+  final DateFormat _dateFormat = DateFormat('MMM dd, yyyy');
 
   Note _note = Note();
   DatabaseHelper _DBhelper;
@@ -31,7 +33,16 @@ class _AddNoteState extends State<AddNote> {
     if (widget.note != null) {
       _note.title = widget.note.title;
       _note.body = widget.note.body;
+      _note.date = widget.note.date;
     }
+
+    _dateController.text = _dateFormat.format(_date);
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _dateController.dispose();
   }
 
   @override
@@ -90,11 +101,17 @@ class _AddNoteState extends State<AddNote> {
     );
   }
 
+  setTime() {
+    setState(() {
+      _note.date = _date;
+    });
+  }
+
   _save() async {
-    //print(widget.note.title);
+    setTime();
+
     if (formkey.currentState.validate()) {
       formkey.currentState.save();
-      print(_note.title);
       if (widget.note != null) {
         _note.id = widget.note.id;
         await _DBhelper.update(_note);

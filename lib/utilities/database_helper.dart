@@ -34,6 +34,7 @@ class DatabaseHelper {
     ${Note.noteId} INTEGER PRIMARY KEY AUTOINCREMENT,
     ${Note.noteTitle} TEXT NOT NULL,
     ${Note.noteBody} TEXT NOT NULL,
+    ${Note.noteDate} TEXT NOT NULL
     )
     ''');
   }

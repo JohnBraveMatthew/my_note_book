@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:my_note_book/models/note.dart';
 import 'package:my_note_book/screens/add_note.dart';
 import 'package:my_note_book/utilities/database_helper.dart';
@@ -10,8 +11,8 @@ class Notebook extends StatefulWidget {
 
 class _NotebookState extends State<Notebook> {
   Future<List<Note>> _noteList;
-  //final DateFormat _dateFormat = DateFormat('mmm dd, yyyy');
-  //AddNote addNote = AddNote();
+  final DateFormat _dateFormat = DateFormat('MMM dd, yyyy');
+
   DatabaseHelper _DBhelper;
 
   final formkey = GlobalKey<FormState>();
@@ -66,7 +67,7 @@ class _NotebookState extends State<Notebook> {
         children: [
           ListTile(
               title: Text(note.title),
-              subtitle: Text("${note.body}"),
+              subtitle: Text("${_dateFormat.format(note.date)}"),
               trailing: IconButton(
                 icon: Icon(
                   Icons.delete,
